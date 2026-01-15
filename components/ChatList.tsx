@@ -1,81 +1,42 @@
-
 import React, { useState } from 'react';
-
 import { Question, Target } from '../types';
-
 import { MessageSquare, Sparkles, User, ShieldCheck, Plus, Send, GraduationCap, Clock, LogOut, ChevronRight } from 'lucide-react';
 
-
-
 interface ChatListProps {
-
   chats: Question[];
-
   isAdmin: boolean;
-
   onReply?: (id: string, answer: string) => void;
-
   onAskNew: () => void;
-
   onLogoutAdmin?: () => void;
-
 }
 
-
-
 const formatRelativeTime = (timestamp: number) => {
-
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-
   if (seconds < 60) return 'Just now';
-
   const minutes = Math.floor(seconds / 60);
-
   if (minutes < 60) return `${minutes}m`;
-
   const hours = Math.floor(minutes / 60);
-
   if (hours < 24) return `${hours}h`;
-
   return `${Math.floor(hours / 24)}d`;
-
 };
 
-
-
 const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, onLogoutAdmin }) => {
-
   const [activeTab, setActiveTab] = useState<Target>(Target.TEACHER);
-
   const [replyText, setReplyText] = useState<{ [key: string]: string }>({});
 
-
-
   const handleReplySubmit = (id: string) => {
-
     if (onReply && replyText[id]?.trim()) {
-
       onReply(id, replyText[id]);
-
       setReplyText({ ...replyText, [id]: '' });
-
     }
-
   };
 
-
-
-  // For students, we filter by the active tab (AI vs Teacher)
-
-  // For Admin, we show all Teacher-targeted messages (serially)
-
-  const filteredChats = isAdmin
-
+  const filteredChats = isAdmin 
     ? chats.sort((a, b) => b.timestamp - a.timestamp)
+    : chats.filter(c => c.target === activeTab).sort((a, b) => b.timestamp - a.timestamp);
 
-    : chats.filter(c => c.target === activeTab).sort((a, b) => b.timestamp - a.timestamp);return (
-    <div className="p-0 h-full flex flex-col bg-[#fcfcfd] animate-in fade-in duration-500">
-      {/* Header Section */}
+  return (
+    <div className="p-0 h-full flex flex-col bg-[#fcfcfd] animate-in fade-in duration-500 relative">
       <div className="p-6 bg-white border-b border-slate-100 sticky top-0 z-30">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -132,8 +93,7 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
         )}
       </div>
 
-      {/* Message List - Added bottom padding to prevent overlap */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-10 pb-40">
+      <div className="flex-1 overflow-y-auto p-6 space-y-10 pb-60">
         {filteredChats.length === 0 ? (
           <div className="py-20 text-center flex flex-col items-center">
             <div className="w-20 h-20 bg-slate-50 rounded-[32px] flex items-center justify-center mb-6">
@@ -168,7 +128,6 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
                   </div>
                 </div>
               ) : isAdmin && (
-                /* Admin Specific Input */
                 <div className="mt-2 w-full pl-4">
                   <div className="relative">
                     <textarea
@@ -191,25 +150,27 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
         )}
       </div>
 
-      {/* Floating Student Input Field - Always Visible */}
       {!isAdmin && (
-        <div className="fixed bottom-28 left-0 right-0 px-6 z-40 pointer-events-none">
-          <div className="max-w-md mx-auto w-full pointer-events-auto">
-            <div className="relative group">
-              <input 
-                type="text"
-                placeholder="Ask your question..."
-                className="w-full bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-[24px] py-4 pl-6 pr-14 text-sm font-bold text-slate-900 shadow-2xl shadow-slate-200 outline-none focus:border-orange-500 transition-all"
-              />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-orange-500 rounded-full text-white shadow-lg shadow-orange-200 active:scale-90 transition-all">
-                <Send size={18} />
-              </button>
-            </div>
+        <div className="fixed bottom-36 left-0 right-0 px-6 z-[100]">
+          <div className="max-w-md mx-auto relative group">
+            <input 
+              type="text"
+              readOnly
+              onClick={onAskNew}
+              placeholder="Ask your question..."
+              className="w-full bg-white/95 backdrop-blur-2xl border-2 border-slate-200 rounded-[24px] py-5 pl-6 pr-14 text-sm font-bold text-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.1)] cursor-pointer outline-none focus:border-orange-500 transition-all"
+            />
+            <button 
+              onClick={onAskNew}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-orange-500 rounded-full text-white shadow-lg shadow-orange-200 active:scale-90 transition-all"
+            >
+              <Send size={20} />
+            </button>
           </div>
         </div>
       )}
     </div>
   );
-  };
+};
 
 export default ChatList;
