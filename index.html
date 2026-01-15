@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MK-way - Intelligence in Motion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --app-lavender: #f3f0ff;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: var(--app-lavender);
+            color: #0f172a;
+            overflow: hidden;
+        }
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+        .elegant-shadow {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        .mask-fade {
+            mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+        }
+
+        /* Gemini-style Animated Logo Keyframes */
+        @keyframes gemini-pulse {
+            0%, 100% { transform: scale(1); filter: blur(8px); opacity: 0.7; }
+            50% { transform: scale(1.2); filter: blur(12px); opacity: 0.9; }
+        }
+        @keyframes gemini-rotate {
+            from { rotate: 0deg; }
+            to { rotate: 360deg; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .gemini-blur {
+            animation: gemini-pulse 4s ease-in-out infinite;
+        }
+        .gemini-orbit {
+            animation: gemini-rotate 10s linear infinite;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="antialiased">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
+.cosmic-bg {
+  background: url('https://your-image-link-here.jpg') no-repeat center center fixed;
+  background-size: cover;
+}

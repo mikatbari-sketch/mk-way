@@ -1,0 +1,8 @@
+
+{
+  "name": "EduQuest Q&A Community",
+  "description": "A student-focused platform where learners can ask questions to AI or teachers, join community discussions, take quizzes, and earn rewards.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
