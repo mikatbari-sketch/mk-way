@@ -212,16 +212,17 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
         {isMenuVisible ? <ChevronDown size={22} /> : <ChevronUp size={22} />}
       </button>
 
-      <style>
-        {`
-          .fixed.bottom-0.left-0.right-0 { 
-            transform: ${isMenuVisible ? 'translateY(0)' : 'translateY(110%)'};
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: ${isMenuVisible ? '1' : '0'};
-            pointer-events: ${isMenuVisible ? 'auto' : 'none'};
-          }
-        `}
-      </style>
+     <style>
+  {`
+  
+    nav.fixed.bottom-6.left-1\/2 { 
+      transform: ${isMenuVisible ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(150%)'} !important;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      opacity: ${isMenuVisible ? '1' : '0'} !important;
+      pointer-events: ${isMenuVisible ? 'auto' : 'none'} !important;
+    }
+  `}
+</style>
     </div>
   );
 };
