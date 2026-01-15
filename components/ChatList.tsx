@@ -153,15 +153,14 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
  {!isAdmin && (
         <div 
           style={{
-            position: 'fixed !important' as any,
-            bottom: '140px',
-            left: '20px',
-            right: '20px',
-            zIndex: '2147483647',
-            display: 'block',
-            pointerEvents: 'auto'
+            position: 'fixed',
+            bottom: '150px',
+            left: '0',
+            right: '0',
+            zIndex: 2147483647,
+            padding: '0 20px',
+            pointerEvents: 'none'
           }}
-          className="fixed bottom-[140px] left-5 right-5"
         >
           <div 
             onClick={onAskNew}
@@ -175,7 +174,8 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
               display: 'flex',
               alignItems: 'center',
               cursor: 'pointer',
-              height: '65px'
+              height: '65px',
+              pointerEvents: 'auto'
             }}
           >
             <input 
@@ -191,7 +191,8 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
                 border: 'none',
                 outline: 'none',
                 backgroundColor: 'transparent',
-                width: '100%'
+                width: '100%',
+                cursor: 'pointer'
               }}
             />
             <div style={{ paddingRight: '10px' }}>
