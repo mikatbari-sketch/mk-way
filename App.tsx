@@ -37,6 +37,7 @@ const App: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeNotification, setActiveNotification] = useState<any>(null);
   const [isSidebarMini, setIsSidebarMini] = useState(false);
+  const [isNavHidden, setIsNavHidden] = useState(false);
   
   const [registry, setRegistry] = useState<User[]>(() => {
     const saved = localStorage.getItem(REGISTRY_KEY);
@@ -235,35 +236,52 @@ const handleAuthSuccess = async (authUser: User) => {
 
 return (
   <div className="flex h-screen cosmic-bg overflow-hidden relative">
-    {/* Animated Cosmic Background Layer (একই রাখবে) */}
+    {/* Animated Cosmic Background Layer */}
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
       {/* ... তোমার existing background code ... */}
     </div>
 
-    {/* SIDEBAR - NEW */}
-    <div className={`relative z-40 h-full transition-all duration-300 ${isSidebarMini ? 'w-20' : 'w-64'} flex-shrink-0`}>
+    {/* ✅ SIDEBAR - MODIFIED for sliding effect */}
+    <div className={`
+      relative z-40 h-full transition-all duration-500 ease-in-out
+      ${isNavHidden 
+        ? 'translate-y-full opacity-0 pointer-events-none' 
+        : 'translate-y-0 opacity-100'
+      }
+      ${isSidebarMini ? 'w-20' : 'w-64'} flex-shrink-0
+    `}>
       <div className="h-full bg-slate-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col">
-        {/* Sidebar Header */}
-        <div className={`p-4 border-b border-white/10 ${isSidebarMini ? 'flex justify-center' : 'flex items-center gap-3'}`}>
-          {!isSidebarMini && (
+        {/* Sidebar Header with Hide Button */}
+        <div className={`p-4 border-b border-white/10 ${isSidebarMini ? 'flex justify-center' : 'flex items-center justify-between'}`}>
+          {!isSidebarMini ? (
             <>
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-                <span className="text-black font-black italic text-sm">MK</span>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                  <span className="text-black font-black italic text-sm">MK</span>
+                </div>
+                <div>
+                  <h1 className="font-extrabold text-lg leading-none text-white">MK-way</h1>
+                  <p className="text-[9px] font-bold text-orange-400 uppercase tracking-[0.2em]">Discovery Lab</p>
+                </div>
               </div>
-              <div>
-                <h1 className="font-extrabold text-lg leading-none text-white">MK-way</h1>
-                <p className="text-[9px] font-bold text-orange-400 uppercase tracking-[0.2em]">Discovery Lab</p>
-              </div>
+              
+              {/* ✅ Hide Button */}
+              <button 
+                onClick={() => setIsNavHidden(true)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/10 text-slate-300 hover:bg-white/20 transition-colors text-sm"
+                title="Hide Navigation"
+              >
+                ⬇️ <span className="font-medium">Hide</span>
+              </button>
             </>
-          )}
-          {isSidebarMini && (
+          ) : (
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)]">
               <span className="text-black font-black italic text-sm">MK</span>
             </div>
           )}
         </div>
 
-        {/* Sidebar Navigation Items */}
+        {/* Sidebar Navigation Items (একই আছে) */}
         <div className="flex-1 p-3 space-y-2 overflow-y-auto">
           <SidebarItem 
             active={currentView === 'feed'} 
@@ -309,7 +327,7 @@ return (
           />
         </div>
 
-        {/* Sidebar Footer with Toggle Button */}
+        {/* Sidebar Footer (একই আছে) */}
         <div className="p-4 border-t border-white/10">
           <button 
             onClick={() => setIsSidebarMini(!isSidebarMini)}
@@ -322,9 +340,20 @@ return (
       </div>
     </div>
 
+    {/* ✅ Show Nav Button (when hidden) */}
+    {isNavHidden && (
+      <button 
+        onClick={() => setIsNavHidden(false)}
+        className="fixed right-8 bottom-8 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white flex items-center justify-center shadow-2xl hover:shadow-[0_0_25px_rgba(255,69,0,0.5)] transition-all duration-300 animate-pulse-slow"
+        title="Show Navigation"
+      >
+        ⬆️
+      </button>
+    )}
+
     {/* Main Content Area */}
     <div className="flex-1 flex flex-col relative z-10 max-w-md mx-auto w-full">
-      {/* Top Header (simplified) */}
+      {/* Top Header */}
       <header className="px-5 py-4 flex items-center justify-between bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div>
           <h1 className="font-extrabold text-xl text-white">
@@ -357,7 +386,7 @@ return (
       </main>
     </div>
 
-    {/* Glass Notification Popup (একই রাখবে) */}
+    {/* Glass Notification Popup */}
     {activeNotification && (
       <div className="fixed top-20 right-4 z-[100] w-72 animate-slide-in pointer-events-auto">
         <div className="glass-morphism p-4 rounded-2xl flex items-center gap-3">
@@ -370,4 +399,4 @@ return (
 );
 };
 
-export default App;    
+export default App;
