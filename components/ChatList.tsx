@@ -152,48 +152,52 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
 
  {!isAdmin && (
         <div style={{
-          position: 'absolute',
-          bottom: '180px',
-          left: '20px',
-          right: '20px',
-          zIndex: 999999999,
-          pointerEvents: 'auto',
-          display: 'block'
+          position: 'fixed',
+          bottom: '150px',
+          left: '0',
+          right: '0',
+          zIndex: 999999,
+          padding: '0 20px',
+          pointerEvents: 'none'
         }}>
           <div 
             onClick={onAskNew}
             style={{
-              maxWidth: '400px',
+              maxWidth: '450px',
               margin: '0 auto',
-              backgroundColor: '#ffffff',
-              borderRadius: '20px',
-              border: '3px solid #f97316',
-              boxShadow: '0 0 30px rgba(249, 115, 22, 0.4)',
+              backgroundColor: 'white',
+              borderRadius: '24px',
+              border: '2px solid #f97316',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
               display: 'flex',
               alignItems: 'center',
-              padding: '15px 20px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              height: '65px',
+              pointerEvents: 'auto'
             }}
           >
-            <span style={{
-              flex: 1,
-              fontSize: '16px',
-              fontWeight: '900',
-              color: '#0f172a'
-            }}>
-              Ask anything...
-            </span>
             <div style={{
-              width: '45px',
-              height: '45px',
-              backgroundColor: '#f97316',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white'
+              flex: 1,
+              padding: '0 25px',
+              fontSize: '15px',
+              fontWeight: 'bold',
+              color: '#1e293b'
             }}>
-              <Send size={24} />
+              Ask your question...
+            </div>
+            <div style={{ paddingRight: '10px' }}>
+              <div style={{
+                width: '45px',
+                height: '45px',
+                backgroundColor: '#f97316',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white'
+              }}>
+                <Send size={22} />
+              </div>
             </div>
           </div>
         </div>
@@ -201,4 +205,5 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
     </div>
   );
 };
+
 export default ChatList;
