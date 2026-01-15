@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Question, Target } from '../types';
-import { MessageSquare, Sparkles, User, ShieldCheck, Plus, Send, GraduationCap, Clock, LogOut, ChevronRight } from 'lucide-react';
+import { MessageSquare, Sparkles, User, ShieldCheck, Plus, Send, LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ChatListProps {
   chats: Question[];
@@ -21,6 +21,7 @@ const formatRelativeTime = (timestamp: number) => {
 };
 
 const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, onLogoutAdmin }) => {
+  const [isMenuVisible, setIsMenuVisible] = useState(true);
   const [activeTab, setActiveTab] = useState<Target>(Target.TEACHER);
   const [replyText, setReplyText] = useState<{ [key: string]: string }>({});
 
@@ -32,11 +33,11 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
   };
 
   const filteredChats = isAdmin 
-    ? chats.sort((a, b) => b.timestamp - a.timestamp)
+    ? [...chats].sort((a, b) => b.timestamp - a.timestamp)
     : chats.filter(c => c.target === activeTab).sort((a, b) => b.timestamp - a.timestamp);
 
   return (
-    <div className="p-0 h-full flex flex-col bg-[#fcfcfd] animate-in fade-in duration-500 relative">
+    <div className="p-0 h-full flex flex-col bg-[#fcfcfd] animate-in fade-in duration-500 relative min-h-screen">
       <div className="p-6 bg-white border-b border-slate-100 sticky top-0 z-30">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -54,7 +55,7 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
           {isAdmin ? (
             <button 
               onClick={onLogoutAdmin}
-              className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors shadow-sm active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors shadow-sm"
             >
               <LogOut size={12} />
               Exit Admin
@@ -116,7 +117,7 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
                 </div>
               </div>
 
-              {chat.answer ? (
+              {chat.answer && (
                 <div className="flex flex-col items-end max-w-[90%] self-end ml-auto">
                   <div className="flex items-center gap-2 mb-1.5 mr-1">
                     <span className={`text-[9px] font-black uppercase tracking-widest ${chat.target === Target.GEMINI ? 'text-indigo-500' : 'text-slate-900'}`}>
@@ -127,7 +128,9 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
                     <p className="text-sm text-white font-bold leading-relaxed">{chat.answer}</p>
                   </div>
                 </div>
-              ) : isAdmin && (
+              )}
+              
+              {isAdmin && !chat.answer && (
                 <div className="mt-2 w-full pl-4">
                   <div className="relative">
                     <textarea
@@ -150,16 +153,16 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
         )}
       </div>
 
- {!isAdmin && (
+      {!isAdmin && (
         <div style={{
           position: 'fixed',
-          bottom: '250px', 
+          bottom: isMenuVisible ? '140px' : '30px',
           left: '0',
           right: '0',
-          zIndex: 9999999, 
+          zIndex: 999999,
           padding: '0 20px',
-          pointerEvents: 'none',
-          display: 'block !important'
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          pointerEvents: 'none'
         }}>
           <div 
             onClick={onAskNew}
@@ -169,40 +172,56 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
               backgroundColor: 'white',
               borderRadius: '24px',
               border: '2px solid #f97316',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+              boxShadow: '0 20px 50px rgba(249, 115, 22, 0.2)',
               display: 'flex',
               alignItems: 'center',
-              cursor: 'pointer',
               height: '65px',
+              cursor: 'pointer',
               pointerEvents: 'auto'
             }}
           >
-            <div style={{
-              flex: 1,
-              padding: '0 25px',
-              fontSize: '15px',
-              fontWeight: 'bold',
-              color: '#1e293b'
-            }}>
-              Ask your question...
-            </div>
+            <div style={{ flex: 1, padding: '0 25px', color: '#1e293b', fontSize: '15px', fontWeight: 'bold' }}>Ask your question...</div>
             <div style={{ paddingRight: '10px' }}>
-              <div style={{
-                width: '45px',
-                height: '45px',
-                backgroundColor: '#f97316',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white'
-              }}>
+              <div style={{ width: '45px', height: '45px', backgroundColor: '#f97316', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
                 <Send size={22} />
               </div>
             </div>
           </div>
         </div>
       )}
+
+      <button 
+        onClick={() => setIsMenuVisible(!isMenuVisible)}
+        style={{
+          position: 'fixed',
+          bottom: '85px',
+          right: '15px',
+          zIndex: 1000000,
+          backgroundColor: '#1e293b',
+          color: 'white',
+          borderRadius: '50%',
+          width: '42px',
+          height: '42px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+          border: '2px solid #334155'
+        }}
+      >
+        {isMenuVisible ? <ChevronDown size={22} /> : <ChevronUp size={22} />}
+      </button>
+
+      <style>
+        {`
+          .fixed.bottom-0.left-0.right-0 { 
+            transform: ${isMenuVisible ? 'translateY(0)' : 'translateY(110%)'};
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: ${isMenuVisible ? '1' : '0'};
+            pointer-events: ${isMenuVisible ? 'auto' : 'none'};
+          }
+        `}
+      </style>
     </div>
   );
 };
