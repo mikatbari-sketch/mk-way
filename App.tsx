@@ -241,14 +241,14 @@ return (
       {/* ... তোমার existing background code ... */}
     </div>
 
-    {/* ✅ SIDEBAR - MODIFIED for sliding effect */}
+    {/* ✅ SIDEBAR - FIXED POSITION */}
     <div className={`
-      relative z-40 h-full transition-all duration-500 ease-in-out
+      fixed left-0 top-0 z-40 h-screen transition-all duration-500 ease-in-out
       ${isNavHidden 
         ? 'translate-y-full opacity-0 pointer-events-none' 
         : 'translate-y-0 opacity-100'
       }
-      ${isSidebarMini ? 'w-20' : 'w-64'} flex-shrink-0
+      ${isSidebarMini ? 'w-20' : 'w-64'}
     `}>
       <div className="h-full bg-slate-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col">
         {/* Sidebar Header with Hide Button */}
@@ -271,7 +271,8 @@ return (
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/10 text-slate-300 hover:bg-white/20 transition-colors text-sm"
                 title="Hide Navigation"
               >
-                ⬇️ <span className="font-medium">Hide</span>
+                <span className="text-lg">⬇️</span>
+                <span className="font-medium">Hide</span>
               </button>
             </>
           ) : (
@@ -281,7 +282,7 @@ return (
           )}
         </div>
 
-        {/* Sidebar Navigation Items (একই আছে) */}
+        {/* Sidebar Navigation Items */}
         <div className="flex-1 p-3 space-y-2 overflow-y-auto">
           <SidebarItem 
             active={currentView === 'feed'} 
@@ -327,7 +328,7 @@ return (
           />
         </div>
 
-        {/* Sidebar Footer (একই আছে) */}
+        {/* Sidebar Footer */}
         <div className="p-4 border-t border-white/10">
           <button 
             onClick={() => setIsSidebarMini(!isSidebarMini)}
@@ -340,19 +341,22 @@ return (
       </div>
     </div>
 
-    {/* ✅ Show Nav Button (when hidden) */}
+    {/* ✅ FLOATING SHOW BUTTON (when sidebar is hidden) */}
     {isNavHidden && (
       <button 
         onClick={() => setIsNavHidden(false)}
-        className="fixed right-8 bottom-8 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white flex items-center justify-center shadow-2xl hover:shadow-[0_0_25px_rgba(255,69,0,0.5)] transition-all duration-300 animate-pulse-slow"
+        className="fixed right-6 bottom-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform duration-300 animate-bounce"
         title="Show Navigation"
       >
-        ⬆️
+        <span className="text-xl">⬆️</span>
       </button>
     )}
 
-    {/* Main Content Area */}
-    <div className="flex-1 flex flex-col relative z-10 max-w-md mx-auto w-full">
+    {/* ✅ Main Content Area - WITH DYNAMIC MARGIN */}
+    <div className={`
+      flex-1 flex flex-col relative z-10 max-w-md mx-auto w-full transition-all duration-300
+      ${isNavHidden ? 'ml-0' : isSidebarMini ? 'ml-20' : 'ml-64'}
+    `}>
       {/* Top Header */}
       <header className="px-5 py-4 flex items-center justify-between bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div>
@@ -399,4 +403,4 @@ return (
 );
 };
 
-export default App;
+export default App;    
