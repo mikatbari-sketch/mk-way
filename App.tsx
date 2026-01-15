@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from './services/firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, arrayRemove, increment, setDoc } from 'firebase/firestore';
 import { AppView, Question, User, Target, Notification } from './types';
-import { Home, MessageSquarePlus, Trophy, LayoutGrid, User as UserIcon, MessageCircle, Bell } from 'lucide-react';
+import { Home, MessageSquarePlus, Trophy, LayoutGrid, User as UserIcon, MessageCircle, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import Feed from './components/Feed';
 import AskQuestion from './components/AskQuestion';
 import QuizList from './components/Quizzes';
@@ -14,9 +14,19 @@ import AuthPortal from './components/AuthPortal';
 
 const REGISTRY_KEY = 'mk_way_registry_v1';
 const SESSION_KEY = 'mk_way_session_v1';
-const NavButton: React.FC<{ active: boolean; icon: React.ReactNode; onClick: () => void }> = ({ active, icon, onClick }) => (
-  <button onClick={onClick} className={`p-3 transition-all ${active ? 'text-orange-500' : 'text-[#94a3b8]'}`}>
-    {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { size: 28, strokeWidth: active ? 2.5 : 2 }) : icon}
+const SidebarItem: React.FC<{ 
+  active: boolean; 
+  icon: React.ReactNode; 
+  label: string;
+  onClick: () => void;
+  isMini: boolean;
+}> = ({ active, icon, label, onClick, isMini }) => (
+  <button 
+    onClick={onClick} 
+    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${active ? 'bg-orange-500/20 text-orange-500' : 'text-[#94a3b8] hover:bg-white/5'}`}
+  >
+    {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { size: 24, strokeWidth: active ? 2.5 : 2 }) : icon}
+    {!isMini && <span className="font-medium whitespace-nowrap">{label}</span>}
   </button>
 );
 const App: React.FC = () => {
@@ -26,6 +36,7 @@ const App: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeNotification, setActiveNotification] = useState<any>(null);
+  const [isSidebarMini, setIsSidebarMini] = useState(false);
   
   const [registry, setRegistry] = useState<User[]>(() => {
     const saved = localStorage.getItem(REGISTRY_KEY);
@@ -223,101 +234,140 @@ const handleAuthSuccess = async (authUser: User) => {
   if (!isLoggedIn) return <AuthPortal onAuthSuccess={handleAuthSuccess} existingUsers={registry} />;
 
 return (
-  <div className="flex flex-col h-screen max-w-md mx-auto cosmic-bg shadow-2xl overflow-hidden relative border-x border-slate-800">
-    {/* Animated Cosmic Background Layer */}
+  <div className="flex h-screen cosmic-bg overflow-hidden relative">
+    {/* Animated Cosmic Background Layer (একই রাখবে) */}
     <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-      
-      {/* MK-way Animated Text (Centrally Positioned) */}
-      <div 
-        className="absolute top-1/2 left-1/2 font-black italic text-7xl text-indigo-500/20 select-none uppercase tracking-tighter whitespace-nowrap"
-        style={{ animation: 'cosmic-pulse 6s infinite ease-in-out' }}
-      >
-        MK-way
-      </div>
-
-      {/* Rotating Orbit Paths & Planets */}
-      {/* Outer Orbit */}
-      <div className="absolute top-1/2 left-1/2 w-[350px] height-[350px] border border-indigo-500/5 rounded-full" 
-           style={{ animation: 'orbit-rotate 25s linear infinite' }}>
-        <div className="absolute top-0 left-1/2 w-3 h-3 bg-blue-400 rounded-full blur-[2px] shadow-[0_0_10px_#60a5fa]"></div>
-      </div>
-
-      {/* Inner Orbit */}
-      <div className="absolute top-1/2 left-1/2 w-[220px] height-[220px] border border-white/5 rounded-full" 
-           style={{ animation: 'orbit-rotate 15s linear infinite reverse' }}>
-        <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-orange-400 rounded-full blur-[1px] shadow-[0_0_8px_#fb923c]"></div>
-      </div>
-      
-      {/* Background Stars */}
-      {[...Array(20)].map((_, i) => (
-        <div 
-          key={i}
-          className="star"
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${1 + Math.random() * 2}px`,
-            height: `${1 + Math.random() * 2}px`,
-            '--duration': `${2 + Math.random() * 3}s`
-          } as any}
-        />
-      ))}
+      {/* ... তোমার existing background code ... */}
     </div>
 
-    {/* Content Layer */}
-    <header className="px-5 py-4 flex items-center justify-between bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-          <span className="text-black font-black italic text-sm">MK</span>
-        </div>
-        <div>
-          <h1 className="font-extrabold text-xl leading-none text-white">MK-way</h1>
-          <p className="text-[10px] font-bold text-orange-400 uppercase tracking-[0.2em] mt-0.5">Discovery Lab</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="p-2.5 rounded-full bg-white/10 text-slate-300 border border-white/10 shadow-sm"><MessageCircle size={20} /></button>
-        <button onClick={() => setCurrentView('notifications')} className={`p-2.5 rounded-full bg-white/10 text-slate-300 relative border border-white/10 shadow-sm transition-all ${currentView === 'notifications' ? 'bg-orange-500 text-white' : ''}`}>
-          <Bell size={20} />
-          {notifications.filter(n => !n.isRead && n.userId === user?.id).length > 0 && (
-            <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 border-2 border-slate-900 rounded-full text-[8px] font-black text-white flex items-center justify-center">
-              {notifications.filter(n => !n.isRead && n.userId === user?.id).length}
-            </span>
+    {/* SIDEBAR - NEW */}
+    <div className={`relative z-40 h-full transition-all duration-300 ${isSidebarMini ? 'w-20' : 'w-64'} flex-shrink-0`}>
+      <div className="h-full bg-slate-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col">
+        {/* Sidebar Header */}
+        <div className={`p-4 border-b border-white/10 ${isSidebarMini ? 'flex justify-center' : 'flex items-center gap-3'}`}>
+          {!isSidebarMini && (
+            <>
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                <span className="text-black font-black italic text-sm">MK</span>
+              </div>
+              <div>
+                <h1 className="font-extrabold text-lg leading-none text-white">MK-way</h1>
+                <p className="text-[9px] font-bold text-orange-400 uppercase tracking-[0.2em]">Discovery Lab</p>
+              </div>
+            </>
           )}
-        </button>
-      </div>
-    </header>
-
-    <main className="flex-1 overflow-y-auto relative z-10">
-      {renderView()}
-    </main>
-
-  {/* Glass Notification Popup */}
-      {activeNotification && (
-        <div className="fixed top-20 right-4 z-[100] w-72 animate-slide-in pointer-events-auto">
-          <div className="glass-morphism p-4 rounded-2xl flex items-center gap-3">
-            <div className={`w-2 h-2 rounded-full ${activeNotification.type === 'error' ? 'bg-red-500 shadow-[0_0_8px_red]' : 'bg-green-500'}`} />
-            <p className="text-sm font-medium text-white">{activeNotification.message}</p>
-          </div>
+          {isSidebarMini && (
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              <span className="text-black font-black italic text-sm">MK</span>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Navigation Bar */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-[32px] p-2 flex justify-around items-center shadow-2xl z-50">
-        <NavButton active={currentView === 'feed'} icon={<Home />} onClick={() => setCurrentView('feed')} />
-        <NavButton active={currentView === 'quiz'} icon={<LayoutGrid />} onClick={() => setCurrentView('quiz')} />
-        <div className="relative -top-6">
-          <button onClick={() => setCurrentView('ask')} className="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.4)] border-4 border-[#020617] bg-orange-500 text-white">
-            <MessageSquarePlus className="w-8 h-8" />
+        {/* Sidebar Navigation Items */}
+        <div className="flex-1 p-3 space-y-2 overflow-y-auto">
+          <SidebarItem 
+            active={currentView === 'feed'} 
+            icon={<Home />} 
+            label="Feed" 
+            onClick={() => setCurrentView('feed')}
+            isMini={isSidebarMini}
+          />
+          <SidebarItem 
+            active={currentView === 'ask'} 
+            icon={<MessageSquarePlus />} 
+            label="Ask Question" 
+            onClick={() => setCurrentView('ask')}
+            isMini={isSidebarMini}
+          />
+          <SidebarItem 
+            active={currentView === 'quiz'} 
+            icon={<LayoutGrid />} 
+            label="Quizzes" 
+            onClick={() => setCurrentView('quiz')}
+            isMini={isSidebarMini}
+          />
+          <SidebarItem 
+            active={currentView === 'leaderboard'} 
+            icon={<Trophy />} 
+            label="Leaderboard" 
+            onClick={() => setCurrentView('leaderboard')}
+            isMini={isSidebarMini}
+          />
+          <SidebarItem 
+            active={currentView === 'profile'} 
+            icon={<UserIcon />} 
+            label="Profile" 
+            onClick={() => setCurrentView('profile')}
+            isMini={isSidebarMini}
+          />
+          <SidebarItem 
+            active={currentView === 'notifications'} 
+            icon={<Bell />} 
+            label="Notifications" 
+            onClick={() => setCurrentView('notifications')}
+            isMini={isSidebarMini}
+          />
+        </div>
+
+        {/* Sidebar Footer with Toggle Button */}
+        <div className="p-4 border-t border-white/10">
+          <button 
+            onClick={() => setIsSidebarMini(!isSidebarMini)}
+            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 transition-all"
+          >
+            {isSidebarMini ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            {!isSidebarMini && <span className="font-medium">Minimize</span>}
           </button>
         </div>
-        <div className="flex gap-8">
-          <NavButton active={currentView === 'leaderboard'} icon={<Trophy />} onClick={() => setCurrentView('leaderboard')} />
-          <NavButton active={currentView === 'profile'} icon={<UserIcon />} onClick={() => setCurrentView('profile')} />
-        </div>
-      </nav>
+      </div>
     </div>
-  );
+
+    {/* Main Content Area */}
+    <div className="flex-1 flex flex-col relative z-10 max-w-md mx-auto w-full">
+      {/* Top Header (simplified) */}
+      <header className="px-5 py-4 flex items-center justify-between bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div>
+          <h1 className="font-extrabold text-xl text-white">
+            {currentView === 'feed' && 'Feed'}
+            {currentView === 'ask' && 'Ask Question'}
+            {currentView === 'quiz' && 'Quizzes'}
+            {currentView === 'leaderboard' && 'Leaderboard'}
+            {currentView === 'profile' && 'Profile'}
+            {currentView === 'notifications' && 'Notifications'}
+          </h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="p-2.5 rounded-full bg-white/10 text-slate-300 border border-white/10 shadow-sm">
+            <MessageCircle size={20} />
+          </button>
+          {notifications.filter(n => !n.isRead && n.userId === user?.id).length > 0 && (
+            <div className="relative">
+              <Bell size={20} className="text-orange-400" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[8px] font-black text-white flex items-center justify-center">
+                {notifications.filter(n => !n.isRead && n.userId === user?.id).length}
+              </span>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto p-4">
+        {renderView()}
+      </main>
+    </div>
+
+    {/* Glass Notification Popup (একই রাখবে) */}
+    {activeNotification && (
+      <div className="fixed top-20 right-4 z-[100] w-72 animate-slide-in pointer-events-auto">
+        <div className="glass-morphism p-4 rounded-2xl flex items-center gap-3">
+          <div className={`w-2 h-2 rounded-full ${activeNotification.type === 'error' ? 'bg-red-500 shadow-[0_0_8px_red]' : 'bg-green-500'}`} />
+          <p className="text-sm font-medium text-white">{activeNotification.message}</p>
+        </div>
+      </div>
+    )}
+  </div>
+);
 };
 
-export default App;
+export default App;    
