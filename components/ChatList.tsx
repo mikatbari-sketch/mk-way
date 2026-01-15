@@ -150,7 +150,7 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
         )}
       </div>
 
-      {!isAdmin && (
+  {!isAdmin && (
         <div className="fixed bottom-36 left-0 right-0 px-6 z-[100]">
           <div className="max-w-md mx-auto relative group">
             <input 
@@ -158,11 +158,14 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
               readOnly
               onClick={onAskNew}
               placeholder="Ask your question..."
-              className="w-full bg-white/95 backdrop-blur-2xl border-2 border-slate-200 rounded-[24px] py-5 pl-6 pr-14 text-sm font-bold text-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.1)] cursor-pointer outline-none focus:border-orange-500 transition-all"
+              className="w-full bg-white border-2 border-slate-200 rounded-[24px] py-5 pl-6 pr-14 text-sm font-bold text-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.2)] cursor-pointer outline-none focus:border-orange-500 transition-all"
             />
             <button 
-              onClick={onAskNew}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-orange-500 rounded-full text-white shadow-lg shadow-orange-200 active:scale-90 transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAskNew();
+              }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-orange-500 rounded-full text-white shadow-lg shadow-orange-200 active:scale-90 transition-all z-[110]"
             >
               <Send size={20} />
             </button>
