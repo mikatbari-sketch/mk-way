@@ -176,29 +176,42 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
         <Sparkles className="absolute top-[-20px] right-[-20px] w-48 h-48 text-indigo-500 opacity-20" />
       </div>
 
-      <div className="space-y-4">
-        <h3 className="font-black text-gray-900 text-lg">Pick a Subject</h3>
-        <div className="grid grid-cols-1 gap-3">
-          {subjects.map((sub) => (
-            <button
-              key={sub.name}
-              onClick={() => startQuiz(sub.name)}
-              className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all active:scale-95 text-left group"
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 ${sub.color} rounded-2xl flex items-center justify-center text-2xl shadow-sm shadow-black/10`}>
-                  {sub.icon}
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900">{sub.name}</h4>
-                  <p className="text-xs text-gray-400 font-medium">5 Questions • 2 Mins</p>
-                </div>
-              </div>
-              <Play className="w-5 h-5 text-gray-300 group-hover:text-indigo-600 transition-colors" />
-            </button>
-          ))}
+     <div className="space-y-4">
+  <h3 className="font-black text-gray-900 text-lg">Pick a Subject</h3>
+  <div className="grid grid-cols-1 gap-3">
+    {subjects.map((sub) => (
+      <button
+        key={sub.name}
+        onClick={() => startQuiz(sub.name)}
+        style={{
+          backgroundColor: '#ffffff', // জোরপূর্বক সাদা ব্যাকগ্রাউন্ড
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'between',
+          padding: '20px',
+          borderRadius: '16px',
+          border: '1px solid #f1f5f9',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          width: '100%',
+          textAlign: 'left',
+          marginBottom: '8px'
+        }}
+        className="flex items-center justify-between transition-all active:scale-95 group"
+      >
+        <div className="flex items-center gap-4">
+          <div className={`w-12 h-12 ${sub.color} rounded-2xl flex items-center justify-center text-2xl shadow-sm shadow-black/10`}>
+            {sub.icon}
+          </div>
+          <div>
+            <h4 className="font-bold text-gray-900" style={{ color: '#111827' }}>{sub.name}</h4>
+            <p className="text-xs text-gray-400 font-medium" style={{ color: '#9ca3af' }}>5 Questions • 2 Mins</p>
+          </div>
         </div>
-      </div>
+        <Play className="w-5 h-5 text-gray-300 group-hover:text-indigo-600 transition-colors" />
+      </button>
+    ))}
+  </div>
+</div>
     </div>
   );
 };
