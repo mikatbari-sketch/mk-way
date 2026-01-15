@@ -153,12 +153,13 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
  {!isAdmin && (
         <div style={{
           position: 'fixed',
-          bottom: '150px',
+          bottom: '250px', 
           left: '0',
           right: '0',
-          zIndex: 999999,
+          zIndex: 9999999, 
           padding: '0 20px',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          display: 'block !important'
         }}>
           <div 
             onClick={onAskNew}
