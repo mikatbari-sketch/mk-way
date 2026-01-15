@@ -1,47 +1,82 @@
 
 import React, { useState } from 'react';
+
 import { Question, Target } from '../types';
+
 import { MessageSquare, Sparkles, User, ShieldCheck, Plus, Send, GraduationCap, Clock, LogOut, ChevronRight } from 'lucide-react';
 
+
+
 interface ChatListProps {
+
   chats: Question[];
+
   isAdmin: boolean;
+
   onReply?: (id: string, answer: string) => void;
+
   onAskNew: () => void;
+
   onLogoutAdmin?: () => void;
+
 }
 
+
+
 const formatRelativeTime = (timestamp: number) => {
+
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
+
   if (seconds < 60) return 'Just now';
+
   const minutes = Math.floor(seconds / 60);
+
   if (minutes < 60) return `${minutes}m`;
+
   const hours = Math.floor(minutes / 60);
+
   if (hours < 24) return `${hours}h`;
+
   return `${Math.floor(hours / 24)}d`;
+
 };
 
+
+
 const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, onLogoutAdmin }) => {
+
   const [activeTab, setActiveTab] = useState<Target>(Target.TEACHER);
+
   const [replyText, setReplyText] = useState<{ [key: string]: string }>({});
 
+
+
   const handleReplySubmit = (id: string) => {
+
     if (onReply && replyText[id]?.trim()) {
+
       onReply(id, replyText[id]);
+
       setReplyText({ ...replyText, [id]: '' });
+
     }
+
   };
 
-  // For students, we filter by the active tab (AI vs Teacher)
-  // For Admin, we show all Teacher-targeted messages (serially)
-  const filteredChats = isAdmin 
-    ? chats.sort((a, b) => b.timestamp - a.timestamp)
-    : chats.filter(c => c.target === activeTab).sort((a, b) => b.timestamp - a.timestamp);
 
-  return (
+
+  // For students, we filter by the active tab (AI vs Teacher)
+
+  // For Admin, we show all Teacher-targeted messages (serially)
+
+  const filteredChats = isAdmin
+
+    ? chats.sort((a, b) => b.timestamp - a.timestamp)
+
+    : chats.filter(c => c.target === activeTab).sort((a, b) => b.timestamp - a.timestamp);return (
     <div className="p-0 h-full flex flex-col bg-[#fcfcfd] animate-in fade-in duration-500">
       {/* Header Section */}
-      <div className="p-6 bg-white border-b border-slate-100">
+      <div className="p-6 bg-white border-b border-slate-100 sticky top-0 z-30">
         <div className="flex items-center justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -73,7 +108,6 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
           )}
         </div>
 
-        {/* Student Tab Switcher */}
         {!isAdmin && (
           <div className="flex p-1 bg-slate-100 rounded-2xl gap-1">
             <button
@@ -98,22 +132,18 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
         )}
       </div>
 
-      {/* Message List */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-10 pb-32">
+      {/* Message List - Added bottom padding to prevent overlap */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-10 pb-40">
         {filteredChats.length === 0 ? (
           <div className="py-20 text-center flex flex-col items-center">
             <div className="w-20 h-20 bg-slate-50 rounded-[32px] flex items-center justify-center mb-6">
               <MessageSquare className="w-8 h-8 text-slate-200" />
             </div>
             <p className="text-slate-400 font-bold text-sm">No messages found here</p>
-            <p className="text-slate-300 text-[10px] font-black uppercase tracking-widest mt-1">
-              {isAdmin ? 'All students are up to date' : 'Start a new discovery path'}
-            </p>
           </div>
         ) : (
           filteredChats.map((chat) => (
             <div key={chat.id} className="space-y-4">
-              {/* Student Message Section */}
               <div className="flex flex-col items-start max-w-[85%] group">
                 <div className="flex items-center gap-2 mb-1.5 ml-1">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
@@ -123,66 +153,63 @@ const ChatList: React.FC<ChatListProps> = ({ chats, isAdmin, onReply, onAskNew, 
                 </div>
                 <div className="bg-white border border-slate-100 p-4 rounded-t-3xl rounded-br-3xl rounded-bl-lg shadow-sm">
                   <p className="text-sm font-bold text-slate-800 leading-relaxed">{chat.text}</p>
-                  {chat.image && (
-                    <div className="mt-3 rounded-2xl overflow-hidden border border-slate-50 bg-slate-50">
-                      <img src={chat.image} className="w-full h-auto object-cover max-h-56" alt="Detail" />
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* Reply Section (Directly After Text) */}
               {chat.answer ? (
-                <div className="flex flex-col items-end max-w-[90%] self-end ml-auto animate-in slide-in-from-right-4 duration-500">
+                <div className="flex flex-col items-end max-w-[90%] self-end ml-auto">
                   <div className="flex items-center gap-2 mb-1.5 mr-1">
                     <span className={`text-[9px] font-black uppercase tracking-widest ${chat.target === Target.GEMINI ? 'text-indigo-500' : 'text-slate-900'}`}>
                       {chat.target === Target.GEMINI ? 'AI Wisdom' : 'Teacher Verified'}
                     </span>
-                    <div className={`w-4 h-4 rounded-lg flex items-center justify-center text-white ${chat.target === Target.GEMINI ? 'bg-indigo-600' : 'bg-black'}`}>
-                      {chat.target === Target.GEMINI ? <Sparkles size={10} /> : <GraduationCap size={10} />}
-                    </div>
                   </div>
-                  <div className={`${chat.target === Target.GEMINI ? 'bg-indigo-600' : 'bg-black'} p-4 rounded-t-3xl rounded-bl-3xl rounded-br-lg shadow-xl shadow-slate-100`}>
-                    <p className="text-sm text-white font-bold leading-relaxed">
-                      {chat.answer}
-                    </p>
+                  <div className={`${chat.target === Target.GEMINI ? 'bg-indigo-600' : 'bg-black'} p-4 rounded-t-3xl rounded-bl-3xl rounded-br-lg shadow-sm`}>
+                    <p className="text-sm text-white font-bold leading-relaxed">{chat.answer}</p>
                   </div>
                 </div>
-              ) : isAdmin ? (
-                /* Admin Reply Interface - Sits where the reply will appear */
-                <div className="mt-2 w-full animate-in fade-in duration-300 pl-4">
-                  <div className="relative group">
-                    <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-12 bg-red-100 rounded-full group-focus-within:bg-red-500 transition-colors"></div>
+              ) : isAdmin && (
+                /* Admin Specific Input */
+                <div className="mt-2 w-full pl-4">
+                  <div className="relative">
                     <textarea
                       value={replyText[chat.id] || ''}
                       onChange={(e) => setReplyText({ ...replyText, [chat.id]: e.target.value })}
-                      placeholder={`Type reply to ${chat.studentName.split(' ')[0]}...`}
-                      className="w-full bg-slate-50/50 rounded-[32px] p-5 pr-16 text-sm font-bold border-2 border-slate-100 focus:outline-none focus:ring-0 focus:border-red-500 transition-all resize-none min-h-[100px] placeholder:text-slate-300 shadow-inner"
+                      placeholder="Type reply..."
+                      className="w-full bg-slate-50 rounded-2xl p-4 pr-12 text-sm border focus:border-red-500 outline-none resize-none"
                     />
                     <button 
                       onClick={() => handleReplySubmit(chat.id)}
-                      disabled={!replyText[chat.id]?.trim()}
-                      className={`absolute right-4 bottom-4 p-3 rounded-2xl transition-all ${
-                        replyText[chat.id]?.trim() ? 'bg-red-500 text-white shadow-xl active:scale-90' : 'bg-slate-200 text-slate-400'
-                      }`}
+                      className="absolute right-2 bottom-2 p-2 bg-red-500 text-white rounded-xl"
                     >
-                      <Send size={18} />
+                      <Send size={16} />
                     </button>
                   </div>
-                </div>
-              ) : (
-                /* Student "Awaiting" Interface */
-                <div className="flex items-center gap-3 text-[10px] text-amber-600 font-black uppercase tracking-widest bg-amber-50/50 py-3 px-5 rounded-3xl w-fit ml-2 border border-amber-100/50">
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
-                  {chat.target === Target.GEMINI ? 'AI Processing Inquiry...' : 'Awaiting Teacher Review'}
                 </div>
               )}
             </div>
           ))
         )}
       </div>
+
+      {/* Floating Student Input Field - Always Visible */}
+      {!isAdmin && (
+        <div className="fixed bottom-28 left-0 right-0 px-6 z-40 pointer-events-none">
+          <div className="max-w-md mx-auto w-full pointer-events-auto">
+            <div className="relative group">
+              <input 
+                type="text"
+                placeholder="Ask your question..."
+                className="w-full bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-[24px] py-4 pl-6 pr-14 text-sm font-bold text-slate-900 shadow-2xl shadow-slate-200 outline-none focus:border-orange-500 transition-all"
+              />
+              <button className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-orange-500 rounded-full text-white shadow-lg shadow-orange-200 active:scale-90 transition-all">
+                <Send size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+  };
 
 export default ChatList;
