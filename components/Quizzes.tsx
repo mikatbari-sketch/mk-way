@@ -131,7 +131,7 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
             const isCorrect = idx === q.correctAnswer;
             const isSelected = idx === selectedOption;
             
-            let btnClass = "bg-white/10 border-gray-100/20 text-white";
+            let btnClass = "bg-indigo-500/25 border-white/40 text-white hover:bg-indigo-500/35 hover:border-indigo-400 shadow-lg";
             if (selectedOption !== null) {
               if (isCorrect) btnClass = "bg-green-50 border-green-500 text-green-700";
               else if (isSelected) btnClass = "bg-red-50 border-red-500 text-red-700";
