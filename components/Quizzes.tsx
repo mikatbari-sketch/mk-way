@@ -86,13 +86,12 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
           <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
             <Trophy className="w-12 h-12 text-amber-500" />
           </div>
-          <h2 className="text-2xl font-black text-gray-900 mb-2">Quiz Completed!</h2>
-          <p className="text-gray-500 mb-8">Great job on your progress!</p>
+         <h2 className="text-2xl font-black text-white mb-2">Quiz Completed!</h2>
           
           <div className="grid grid-cols-2 gap-4 w-full mb-8">
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
               <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Score</p>
-              <p className="text-2xl font-black text-indigo-600">{score}/{activeQuiz.questions.length}</p>
+              <p className="text-2xl font-black text-indigo-300">{score}/{activeQuiz.questions.length}</p>
             </div>
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
               <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">XP Gained</p>
@@ -124,7 +123,7 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
               ></div>
             </div>
           </div>
-          <h2 className="text-lg font-bold text-gray-900 leading-snug">{q.question}</h2>
+          <h2 className="text-lg font-bold text-white leading-snug">{q.question}</h2>
         </div>
 
         <div className="space-y-3 flex-1">
@@ -132,7 +131,7 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
             const isCorrect = idx === q.correctAnswer;
             const isSelected = idx === selectedOption;
             
-            let btnClass = "bg-white border-gray-100 text-gray-700";
+            let btnClass = "bg-white/10 border-gray-100/20 text-white";
             if (selectedOption !== null) {
               if (isCorrect) btnClass = "bg-green-50 border-green-500 text-green-700";
               else if (isSelected) btnClass = "bg-red-50 border-red-500 text-red-700";
@@ -177,7 +176,7 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
       </div>
 
      <div className="space-y-4">
-  <h3 className="font-black text-gray-900 text-lg">Pick a Subject</h3>
+  <h3 className="font-black text-white text-lg">Pick a Subject</h3>
   <div className="grid grid-cols-1 gap-3">
     {subjects.map((sub) => (
       <button
@@ -203,7 +202,7 @@ const QuizList: React.FC<QuizListProps> = ({ onPointsEarned }) => {
             {sub.icon}
           </div>
           <div>
-            <h4 className="font-bold text-gray-900" style={{ color: '#111827' }}>{sub.name}</h4>
+            <h4 className="font-bold text-white">{sub.name}</h4>
             <p className="text-xs text-gray-400 font-medium" style={{ color: '#9ca3af' }}>5 Questions • 2 Mins</p>
           </div>
         </div>
